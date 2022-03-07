@@ -1,0 +1,231 @@
+1. 
+#Creating the database.
+MariaDB [(none)]> CREATE DATABASE bank;
+Query OK, 1 row affected (0.001 sec)
+
+2. 
+#Creating the table
+MariaDB [(none)]> use bank;
+Database changed
+MariaDB [bank]> create table bank_details(
+    -> product varchar(100),
+    -> quantity int(255),
+    -> price decimal(50),
+    -> purchase_cost decimal(50),
+    -> estimated_sale_price float(50));
+Query OK, 0 rows affected (0.028 sec)
+
+3. 
+#To view the table fields.
+MariaDB [bank]> describe bank_details;
++----------------------+---------------+------+-----+---------+-------+
+| Field                | Type          | Null | Key | Default | Extra |
++----------------------+---------------+------+-----+---------+-------+
+| product              | varchar(100)  | YES  |     | NULL    |       |
+| quantity             | int(255)      | YES  |     | NULL    |       |
+| price                | decimal(50,0) | YES  |     | NULL    |       |
+| purchase_cost        | decimal(50,0) | YES  |     | NULL    |       |
+| estimated_sale_price | double        | YES  |     | NULL    |       |
++----------------------+---------------+------+-----+---------+-------+
+5 rows in set (0.025 sec)
+
+4. 
+MariaDB [bank]> #Inserting data
+#1st record with values
+MariaDB [bank]> insert into bank_details value(
+    -> "Paycard",
+    -> "3",
+    -> "330",
+    -> "8008",
+    -> "9009");
+Query OK, 1 row affected (0.011 sec)
+
+#2ND record with values
+MariaDB [bank]> insert into bank_details value(
+    -> "Paypoints",
+    -> "4",
+    -> "200",
+    -> "8000",
+    -> "6800");
+Query OK, 1 row affected (0.009 sec)
+
+#Viewing the records
+MariaDB [bank]> select * from bank_details;
++-----------+----------+-------+---------------+----------------------+
+| product   | quantity | price | purchase_cost | estimated_sale_price |
++-----------+----------+-------+---------------+----------------------+
+| Paycard   |        3 |   330 |          8008 |                 9009 |
+| Paypoints |        4 |   200 |          8000 |                 6800 |
++-----------+----------+-------+---------------+----------------------+
+2 rows in set (0.000 sec)
+
+
+5. 
+#To add a column: geo_location 
+MariaDB [bank]> alter table bank_details add column geo_location varchar(20);
+Query OK, 0 rows affected (0.025 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bank]> select * from bank_details;
++-----------+----------+-------+---------------+----------------------+--------------+
+| product   | quantity | price | purchase_cost | estimated_sale_price | geo_location |
++-----------+----------+-------+---------------+----------------------+--------------+
+| PayCard   |        3 |   330 |          8008 |                 9009 | NULL         |
+| Paypoints |        4 |   200 |          8000 |                 6800 | NULL         |
++-----------+----------+-------+---------------+----------------------+--------------+
+2 rows in set (0.046 sec)
+
+6. 
+#The value is null;
+MariaDB [bank]> select * from bank_details;
++-----------+----------+-------+---------------+----------------------+--------------+
+| product   | quantity | price | purchase_cost | estimated_sale_price | geo_location |
++-----------+----------+-------+---------------+----------------------+--------------+
+| PayCard   |        3 |   330 |          8008 |                 9009 | NULL         |
+| Paypoints |        4 |   200 |          8000 |                 6800 | NULL         |
++-----------+----------+-------+---------------+----------------------+--------------+
+2 rows in set (0.046 sec)
+
+7. 
+#Viewing how many characters are in the product column
+MariaDB [bank]> select char_length(product) as length from bank_details;
++-----------+--------+
+| product   | length |
++-----------+--------+
+| Paycard   |      7 |
+| Paypoints |      9 |
++-----------+--------+
+2 rows in set (0.001 sec)
+
+8. 
+MariaDB [bank]> #Alter the Product field from CHAR to VARCHAR in Bank_details
+MariaDB [bank]> alter table bank_details modify column product varchar(20);
+Query OK, 2 rows affected (0.079 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [bank]> describe bank_details;
++----------------------+---------------+------+-----+---------+-------+
+| Field                | Type          | Null | Key | Default | Extra |
++----------------------+---------------+------+-----+---------+-------+
+| product              | varchar(20)   | YES  |     | NULL    |       |
+| quantity             | int(255)      | YES  |     | NULL    |       |
+| price                | decimal(50,0) | YES  |     | NULL    |       |
+| purchase_cost        | decimal(50,0) | YES  |     | NULL    |       |
+| estimated_sale_price | double        | YES  |     | NULL    |       |
+| geo_location         | varchar(20)   | YES  |     | NULL    |       |
++----------------------+---------------+------+-----+---------+-------+
+6 rows in set (0.021 sec)
+
+9. 
+MariaDB [bank]> #Reduce the size of the Product field from 10 to 6 and check if it is possible.
+MariaDB [bank]> alter table bank_details modify column product varchar(6);
+Query OK, 2 rows affected, 2 warnings (0.060 sec)
+Records: 2  Duplicates: 0  Warnings: 2
+
+MariaDB [bank]> select product from bank_details;
++---------+
+| product |
++---------+
+| Paycar  |
+| Paypoi  |
++---------+
+2 rows in set (0.003 sec)
+
+MariaDB [bank]> describe bank_details;
++----------------------+---------------+------+-----+---------+-------+
+| Field                | Type          | Null | Key | Default | Extra |
++----------------------+---------------+------+-----+---------+-------+
+| product              | varchar(6)    | YES  |     | NULL    |       |
+| quantity             | int(255)      | YES  |     | NULL    |       |
+| price                | decimal(50,0) | YES  |     | NULL    |       |
+| purchase_cost        | decimal(50,0) | YES  |     | NULL    |       |
+| estimated_sale_price | double        | YES  |     | NULL    |       |
+| geo_location         | varchar(20)   | YES  |     | NULL    |       |
++----------------------+---------------+------+-----+---------+-------+
+6 rows in set (0.019 sec)
+#It is possible to reduce the size of the field, but it will affect the existing records, like it has affected the value "Paycard" by truncating one character "d", to "Paycar".
+
+10.
+#Create a table named as Bank_Holidays 
+MariaDB [bank]> create table Bank_Holidays(
+    -> Holiday date,
+    -> Start_time time,
+    -> End_time timestamp);
+Query OK, 0 rows affected (0.032 sec)
+
+#Viewing Bank_Holidays
+MariaDB [bank]> describe Bank_Holidays;
++------------+-----------+------+-----+---------------------+-------------------------------+
+| Field      | Type      | Null | Key | Default             | Extra                         |
++------------+-----------+------+-----+---------------------+-------------------------------+
+| Holiday    | date      | YES  |     | NULL                |                               |
+| Start_time | time      | YES  |     | NULL                |                               |
+| End_time   | timestamp | NO   |     | current_timestamp() | on update current_timestamp() |
++------------+-----------+------+-----+---------------------+-------------------------------+
+3 rows in set (0.022 sec)
+
+
+11.
+#Postpone Holiday to next day by updating the Holiday field
+MariaDB [bank]> select Holiday from bank_holidays where Holiday = '2022-02-28';
++------------+
+| Holiday    |
++------------+
+| 2022-02-28 |
++------------+
+1 row in set (0.001 sec)
+
+MariaDB [bank]> update bank_holidays set Holiday = '2022-03-01' where Holiday = '2022-02-28';
+Query OK, 1 row affected (0.009 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+#Changing the timezone
+MariaDB [bank]> update bank_holidays set End_time = UTC_timestamp;
+Query OK, 4 rows affected (0.005 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+
+MariaDB [bank]> select * from bank_holidays;
++------------+------------+---------------------+
+| Holiday    | Start_time | End_time            |
++------------+------------+---------------------+
+| 2022-02-25 | 11:26:00   | 2022-02-28 12:52:04 |
+| 2022-03-01 | 14:42:00   | 2022-02-28 12:52:04 |
+| 2022-02-28 | 00:00:00   | 2022-02-28 12:52:04 |
+| 2022-02-28 | 15:07:05   | 2022-02-28 12:52:04 |
++------------+------------+---------------------+
+4 rows in set (0.001 sec)
+
+12.
+#Display output of PRODUCT field as NEW_PRODUCT in  Bank_details table.
+MariaDB [bank]> select product from bank_details as NEW_PRODUCT;
++---------+
+| product |
++---------+
+| Paycar  |
+| Paypoi  |
++---------+
+2 rows in set (0.026 sec)
+
+13.
+#Display only one record from bank_details.
+MariaDB [bank]> select product from bank_details;
++---------+
+| product |
++---------+
+| Paycar  |
+| Paypoi  |
++---------+
+2 rows in set (0.000 sec)
+
+14.
+MariaDB [bank]> #Display the first five characters of the Geo_location field of Bank_details.
+MariaDB [bank]> select Geo_location from bank_details;
++--------------+
+| Geo_location |
++--------------+
+| NULL         |
+| NULL         |
++--------------+
+2 rows in set (0.001 sec)
+
+
